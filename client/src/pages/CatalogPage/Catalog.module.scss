@@ -1,0 +1,51 @@
+.Catalog {
+    cursor: pointer;
+
+    .userList {
+
+        .user {
+            color: #1C1C1C;
+            font-family: Roboto, monospace;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 130%;
+        }
+
+        .album {
+            margin-left: 24px;
+            color: #1C1C1C;
+            font-family: Roboto, monospace;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 130%;
+        }
+    }
+}
+
+.gridPhoto {
+    display: grid;
+    grid-template-columns: 150px 150px 150px;
+    gap: 42px;
+    margin-left: 105px;
+
+    .favorites {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+
+        &:hover {
+            animation: logo-spin 5s linear;
+        }
+
+        @keyframes logo-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    }
+}

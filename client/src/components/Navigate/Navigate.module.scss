@@ -1,0 +1,32 @@
+.nav {
+    display: flex;
+}
+
+.link {
+    border: none;
+    background: none;
+    outline: none;
+    color: #000;
+    border-radius: 16px;
+    text-decoration: none;
+    text-align: center;
+    padding: 16px 32px;
+    font-family: Roboto, monospace;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 130%;
+    transition: all .1s ease-in-out;
+
+
+    width: 100%;
+
+    &:hover {
+        color: #117DC1;
+    }
+
+    &:global(.active) {
+        color: #117DC1;
+        background-color: #EDF9FF;
+    }
+}
