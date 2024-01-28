@@ -1,3 +1,68 @@
-.Favorites {
+.FavoritesPage {
 
+    .empty {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+        height: calc(100vh - 100px);
+
+        h3 {
+            color: #1C1C1C;
+            font-family: Roboto, monospace;
+            font-size: 22px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 130%;
+        }
+
+        p {
+            color: #1C1C1C;
+            font-family: Roboto, monospace;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 130%;
+        }
+    }
+
+    .favoritesGrid {
+        margin-top: 56px;
+        display: grid;
+        grid-template-columns: 150px 150px 150px;
+        gap: 50px;
+        justify-content: center;
+
+        .favorites {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            cursor: pointer;
+
+            &:hover {
+                animation: logo-spin 5s linear;
+            }
+
+            @keyframes logo-spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+
+        p {
+            color: #787878;
+
+            font-family: Roboto, monospace;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 150%; /* 21px */
+        }
+    }
 }

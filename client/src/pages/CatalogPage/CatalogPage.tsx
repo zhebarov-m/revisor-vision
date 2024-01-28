@@ -6,7 +6,11 @@ import ListOpen from '../../assets/icons/list_icon_open.svg';
 import ListClose from '../../assets/icons/list_icon_close.svg';
 import FavoritesIcon from '../../assets/icons/favorites-icon.svg';
 import FavoritesIconActive from '../../assets/icons/favorites-icon-active.svg';
-import {FavoritesPage} from "../FavoritesPage/FavoritesPage.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {addToFavorites, removeFromFavorites, setModalPhoto} from "../../redux/slices/FavoritesSlice.ts";
+import {RootState} from "../../redux/store.ts";
+import {Modal} from "../../components/UI/modal/Modal.tsx";
+import {Loader} from "../../components/UI/Loader/Loader.tsx";
 
 interface CatalogPageProps {
     className?: string;
@@ -25,7 +29,7 @@ interface Catalog {
     email: string;
 }
 
-interface Photos {
+export interface Photos {
     id: string;
     albumId: string;
     title: string;
@@ -39,20 +43,30 @@ export const CatalogPage = memo((props: CatalogPageProps) => {
     const [photosAlbum, setPhotosAlbum] = useState<Photos[]>([]);
     const [openUsers, setOpenUsers] = useState<{ [key: string]: boolean }>({});
     const [openAlbums, setOpenAlbums] = useState<{ [key: string]: boolean }>({});
-    const [favorites, setFavorites] = useState<string[]>([]);
+    const dispatch = useDispatch()
+    const favorites = useSelector((state: RootState) => state.catalog.favorites)
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get('http://localhost:3000/users/');
-                setCatalog(data);
+                setTimeout(async () => {
+                    const { data } = await axios.get('http://localhost:3000/users/');
+                    setCatalog(data);
+                    setLoading(false);
+                }, 1000)
             } catch (error) {
                 console.error("Ошибка при получении пользователей:", error);
+                setLoading(false);
             }
         }
 
         fetchData();
     }, []);
+
+    const handleOpenModal = (photo: Photos) => {
+        dispatch(setModalPhoto(photo))
+    }
 
     const handleClickUser = async (id: string) => {
         setOpenUsers(prevState => ({
@@ -82,19 +96,23 @@ export const CatalogPage = memo((props: CatalogPageProps) => {
         }
     }
 
-    const handleToggleFavorite = (photoId: string) => {
-        setFavorites(prevFavorites => {
-            if (prevFavorites.includes(photoId)) {
-                return prevFavorites.filter(id => id !== photoId);
-            } else {
-                return [...prevFavorites, photoId];
-            }
-        });
-    }
+    const handleToggleFavorite = (photo: Photos) => {
+        if (favorites.includes(photo)) {
+            dispatch(removeFromFavorites(photo));
+        } else {
+            dispatch(addToFavorites(photo));
+        }
+    };
 
     return (
         <div className={customClasses(styles.Catalog, {}, [className!])}>
-            {catalog.map(user => (
+            <Modal />
+            {loading ? (
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: 200}}>
+                    <Loader />
+                </div>
+            ) : (
+                catalog.map(user => (
                 <div key={user.id} className={styles.userList}>
                     <div style={{ display: 'flex', gap: 24 }}>
                         {openUsers[user.id] ? <img src={ListClose} alt="" /> : <img src={ListOpen} alt="" />}
@@ -112,18 +130,21 @@ export const CatalogPage = memo((props: CatalogPageProps) => {
                                         <img
                                             className={styles.photo}
                                             src={photo.url}
+                                            title={photo.title}
                                             alt=""
-                                            onClick={() => handleToggleFavorite(photo.url)}
+                                            onClick={() => handleOpenModal(photo)}
                                         />
-                                        {favorites.includes(photo.id) && (
+                                        {favorites.some(favPhoto => favPhoto.id === photo.id) && (
                                             <img
+                                                onClick={() => handleToggleFavorite(photo)}
                                                 className={styles.favorites}
                                                 src={FavoritesIconActive}
                                                 alt=""
                                             />
                                         )}
-                                        {!favorites.includes(photo.id) && (
+                                        {!favorites.some(favPhoto => favPhoto.id === photo.id) && (
                                             <img
+                                                onClick={() => handleToggleFavorite(photo)}
                                                 className={styles.favorites}
                                                 src={FavoritesIcon}
                                                 alt=""
@@ -135,8 +156,7 @@ export const CatalogPage = memo((props: CatalogPageProps) => {
                         </div>
                     ))}
                 </div>
-            ))}
-            <FavoritesPage fav={favorites}/>
+            )))}
         </div>
     );
 });
